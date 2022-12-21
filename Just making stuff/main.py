@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import os
-import
+import random
 
 os.chdir("C:\\Users\\S1980253\\Downloads\\My discord bot main\\Just making stuff")
 
@@ -67,6 +67,89 @@ async def withdraw(ctx,amount = None):
         await update_bank(ctx.author,amount)
         await update_bank(ctx.author, -1*amount,"bank")
 
+@client.command()
+async def send(ctx,member:discord.Member,amount = None):
+    await open_account(ctx.author)
+    await open_account(member)
+
+    if amount == None:
+        await ctx.send("You didn't enter an amount and you only have 101 cash")
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[0]:
+        await ctx.send("You don't have that much money get a job")
+        return
+    if amount<0:
+        await ctx.send("Amount of money must be more than 1 idiot")
+        return
+
+    await update_bank(ctx.author,-1*amount,"bank")
+    await update_bank(member,amount,"bank")
+
+    await ctx.send(f"you gave {amount} coins finally")
+
+@client.command()
+async def slots(ctx,amount = None):
+    await open_account(ctx.author)
+
+
+    if amount == None:
+        await ctx.send("You didn't enter an amount and you only have 101 cash")
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[0]:
+        await ctx.send("You don't have that much money get a job")
+        return
+    if amount<0:
+        await ctx.send("Amount of money must be more than 1 idiot")
+        return
+
+    final = []
+    for i in range(3):
+        a = random.choice(["XD","FD","SF"])
+
+        final.append(a)
+
+    await ctx.send(str(final))
+
+
+    await update_bank(ctx.author,-1*amount)
+    await update_bank(ctx.author,amount,"bank")
+
+    await ctx.send(f"You deposited {amount} coins ez")
+
+
+    #dep command
+@client.command()
+async def deposit(ctx,member:discord.Member,amount = None):
+    await open_account(ctx.author)
+    await open_account(member)
+
+    if amount == None:
+        await ctx.send("You didn't enter an amount and you only have 101 cash")
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[0]:
+        await ctx.send("You don't have that much money get a job")
+        return
+    if amount<0:
+        await ctx.send("Amount of money must be more than 1 idiot")
+        return
+
+    await update_bank(ctx.author,-1*amount)
+    await update_bank(ctx.author,amount,"bank")
+
+    await ctx.send(f"You deposited {amount} coins ez")
+
 
 
 
@@ -98,7 +181,7 @@ async def get_bank_data():
     return users
 
 
-async def update_bank(user,change = 0,mode = "wallet")
+async def update_bank(user,change = 0,mode = "wallet"):
     users = await get_bank_data()
 
     users[str(user.id)][mode] += change
@@ -107,3 +190,4 @@ async def update_bank(user,change = 0,mode = "wallet")
         json.dump(users,f)
 
     bal = [users[str(user.id)]["wallet"],users[str(user.id)]["bank"]]
+    return  bal
